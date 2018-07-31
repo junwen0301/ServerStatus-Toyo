@@ -1,7 +1,7 @@
 # ServerStatus-Toyo： 
 
 * ServerStatus-Toyo版是一个酷炫高逼格的云探针、云监控、服务器云监控、多服务器探针~，该云监控（云探针）是ServerStatus（ https://github.com/tenyue/ServerStatus ）项目的优化/修改版。
-* 在线演示：http://tz.toyoo.ml    
+* 在线演示：https://tz.toyoo.pw    
 * 我的博客：https://doub.io/shell-jc3/
 
 # 目录介绍：
@@ -12,15 +12,17 @@
 
 # 更新说明：
 
-* 20170430, 优化手机显示式样
-* 20170429, 去除主机名设定
-* 20170427, 增加一键部署脚本
+* 2017.10.12, 负载Load 优化，并且支持CentOS6系统
+* 2017.10.10, 修改负载 Load 的值为：当前服务器上链接SSR等软件的IP总数(只要软件监听IPv6那么就能统计，例如SSH)
+* 2017.04.30, 优化手机显示式样
+* 2017.04.29, 去除主机名设定
+* 2017.04.27, 增加一键部署脚本
 
 # 安装教程：     
 
 执行下面的代码下载并运行脚本。
 ``` bash
-wget -N --no-check-certificate https://softs.fun/Bash/status.sh && chmod +x status.sh
+wget -N --no-check-certificate https://softs.loan/Bash/status.sh && chmod +x status.sh
 
 # 如果上面这个脚本无法下载，尝试使用备用下载：
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/status.sh && chmod +x status.sh
@@ -141,6 +143,11 @@ Caddy配置文件：/usr/local/caddy/caddy
 网络实时流量单位为：G=GB/s，M=MB/s，K=KB/s
 
 服务器总流量单位为：T=TB，G=GB，M=MB，K=KB
+
+### CentOS7系统 负载显示异常的问题
+
+CentOS7系统 默认可能没有安装 netstat 依赖，所以会造成IP检测(负载)出错，手动安装即可：
+`yum install net-tools -y `
 
 # 相关开源项目，感谢： 
 
