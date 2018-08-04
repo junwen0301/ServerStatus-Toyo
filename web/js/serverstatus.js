@@ -77,7 +77,38 @@ function uptime() {
 		if(result.reload)
 			setTimeout(function() { location.reload(true) }, 1000);
 
+		//
+		var sum_network_rx=0;
+		var sum_network_tx=0;
+		var sum_load=0;
+		var sum_network_in=0;
+		var sum_network_out=0;
+		var sum_cpu=0;
+		var sum_memory_used=0;
+		var sum_swap_used=0;
+		var sum_hdd_total=0;
+		var sum_hdd_used=0;
+		var sum_memory_total=0;
+		var sum_swap_total=0;
+
 		for (var i = 0; i < result.servers.length; i++) {
+			if (i==result.servers.length-1){
+				result.servers[i].online4=1;
+				result.servers[i].uptime = 1000;
+				result.servers[i].load = sum_load;
+				result.servers[i].network_rx = sum_network_rx;
+				result.servers[i].network_tx = sum_network_tx;
+				result.servers[i].network_in = sum_network_in;
+				result.servers[i].network_out = sum_network_out;
+				result.servers[i].cpu = sum_cpu/10;
+				result.servers[i].memory_used = sum_memory_used;
+				result.servers[i].memory_total = sum_memory_total;
+				result.servers[i].swap_used = sum_swap_used;
+				result.servers[i].hdd_used = sum_hdd_used;
+				result.servers[i].hdd_total = sum_hdd_total;
+				result.servers[i].custom = result.servers[i-1].custom;
+				result.servers[i].swap_total = sum_swap_total;
+			}
 			var TableRow = $("#servers tr#r" + i);
 			var ExpandRow = $("#servers #rt" + i);
 			var hack; // fuck CSS for making me do this
@@ -174,13 +205,14 @@ function uptime() {
 				// Uptime
 				TableRow.children["uptime"].innerHTML = result.servers[i].uptime;
 
+
 				// Load
 				if(result.servers[i].load == -1) {
 					TableRow.children["load"].innerHTML = "–";
 				} else {
 					TableRow.children["load"].innerHTML = result.servers[i].load;
+					sum_load+=result.servers[i].load;
 				}
-
 				// Network
 				var netstr = "";
 				if(result.servers[i].network_rx < 1000)
@@ -197,6 +229,9 @@ function uptime() {
 				else
 					netstr += (result.servers[i].network_tx/1000/1000).toFixed(1) + "M";
 				TableRow.children["network"].innerHTML = netstr;
+
+				sum_network_rx+=result.servers[i].network_rx;
+				sum_network_tx+=result.servers[i].network_tx;
 
 				//Traffic
 				var trafficstr = "";
@@ -223,6 +258,9 @@ function uptime() {
 					trafficstr += (result.servers[i].network_out/1024/1024/1024/1024).toFixed(2) + "T";
 				TableRow.children["traffic"].innerHTML = trafficstr;
 
+				sum_network_in+=result.servers[i].network_in;
+				sum_network_out+=result.servers[i].network_out;
+
 				// CPU
 				if (result.servers[i].cpu >= 90)
 					TableRow.children["cpu"].children[0].children[0].className = "progress-bar progress-bar-danger";
@@ -232,6 +270,7 @@ function uptime() {
 					TableRow.children["cpu"].children[0].children[0].className = "progress-bar progress-bar-success";
 				TableRow.children["cpu"].children[0].children[0].style.width = result.servers[i].cpu + "%";
 				TableRow.children["cpu"].children[0].children[0].innerHTML = result.servers[i].cpu + "%";
+				sum_cpu+=result.servers[i].cpu;
 
 				// Memory
 				var Mem = ((result.servers[i].memory_used/result.servers[i].memory_total)*100.0).toFixed(0);
@@ -246,6 +285,10 @@ function uptime() {
 				ExpandRow[0].children["expand_mem"].innerHTML = "内存信息: " + bytesToSize(result.servers[i].memory_used*1024, 2) + " / " + bytesToSize(result.servers[i].memory_total*1024, 2);
 				// Swap
 				ExpandRow[0].children["expand_swap"].innerHTML = "交换分区: " + bytesToSize(result.servers[i].swap_used*1024, 2) + " / " + bytesToSize(result.servers[i].swap_total*1024, 2);
+				sum_memory_total+=result.servers[i].memory_total;
+				sum_memory_used+=result.servers[i].memory_used;
+				sum_swap_used+=result.servers[i].swap_used;
+				sum_swap_total+=result.servers[i].swap_total;
 
 				// HDD
 				var HDD = ((result.servers[i].hdd_used/result.servers[i].hdd_total)*100.0).toFixed(0);
@@ -259,14 +302,19 @@ function uptime() {
 				TableRow.children["hdd"].children[0].children[0].innerHTML = HDD + "%";
 				ExpandRow[0].children["expand_hdd"].innerHTML = "硬盘信息: " + bytesToSize(result.servers[i].hdd_used*1024*1024, 2) + " / " + bytesToSize(result.servers[i].hdd_total*1024*1024, 2);
 
+				sum_hdd_used+=result.servers[i].hdd_used;
+				sum_hdd_total+=result.servers[i].hdd_total;
+
 				// Custom
 				if (result.servers[i].custom) {
 					ExpandRow[0].children["expand_custom"].innerHTML = result.servers[i].custom
 				} else {
 					ExpandRow[0].children["expand_custom"].innerHTML = ""
 				}
+
 			}
 		};
+		
 
 		d = new Date(result.updated*1000);
 		error = 0;
